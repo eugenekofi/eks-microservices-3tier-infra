@@ -1,81 +1,83 @@
+# eks-microservices-3tier-loadbalancer-ingress-infra
 
-Here's a more professional, DevOps-oriented approach to the Screenshots section:
+Infrastructure setup for deploying a 3-tier microservices application on Amazon EKS. This project demonstrates production-grade practices including AWS Load Balancer Controller, Ingress routing, custom domain integration with GoDaddy, and TLS/HTTPS termination using ACM.
 
-```markdown
-## Infrastructure and Application Visualization
+# Three Tier Architecture Deployment on AWS EKS
 
-### AWS Cloud Infrastructure
+Stan's Robot Shop is a sample microservice application you can use as a sandbox to test and learn containerised application orchestration and monitoring techniques. It is not intended to be a comprehensive reference example of how to write a microservices application, although you will better understand some of those concepts by playing with Stan's Robot Shop. To be clear, the error handling is patchy and there is not any security built into the application.
 
-<p align="center">
-  <img src="screenshots/aws-infrastructure-overview.png" alt="AWS Infrastructure Topology" width="850">
-  <br>
-  <em>Comprehensive AWS Cloud Infrastructure Deployment Topology</em>
-</p>
+You can get more detailed information from my [blog post](https://www.instana.com/blog/stans-robot-shop-sample-microservice-application/) about this sample microservice application.
 
-### Infrastructure Components Breakdown
+This sample microservice application has been built using these technologies:
 
-| Component | Details | Purpose |
-|-----------|---------|---------|
-| **Hosted Zone** | ![Hosted Zone](screenshots/aws-hosted-zone.png) | DNS Management and Custom Domain Configuration |
-| **AWS ACM** | ![AWS ACM](screenshots/aws-acm.png) | TLS/SSL Certificate Management for Secure Communication |
-| **EKS Cluster** | ![EKS Cluster](screenshots/eks-cluster.png) | Kubernetes Cluster Overview with Namespaces and Workload Distribution |
+- NodeJS ([Express](http://expressjs.com/))
+- Java ([Spring Boot](https://spring.io/))
+- Python ([Flask](http://flask.pocoo.org))
+- Golang
+- PHP (Apache)
+- MongoDB
+- Redis
+- MySQL ([Maxmind](http://www.maxmind.com) data)
+- RabbitMQ
+- Nginx
+- AngularJS (1.x)
 
-**Key Insights:**
-- Centralized DNS management using Route 53
-- Secure communication with AWS Certificate Manager
-- Scalable microservices deployment on Amazon EKS
+The various services in the sample application already include all required Instana components installed and configured. The Instana components provide automatic instrumentation for complete end-to-end [tracing](https://docs.instana.io/core_concepts/tracing/), as well as complete visibility into time series metrics for all the technologies.
 
-### Microservices Application Interface
+To see the application performance results in the Instana dashboard, you will first need an Instana account. Don't worry, a [trial account](https://instana.com/trial?utm_source=github&utm_medium=robot_shop) is free.
 
-<p align="center">
-  <img src="screenshots/application-architecture.png" alt="Microservices Architecture" width="850">
-  <br>
-  <em>Microservices Application Architecture and User Interface Workflow</em>
-</p>
+---
 
-### Application User Interfaces
+## Build from Source
 
-| Interface | Screenshot | Description | Key Features |
-|-----------|------------|-------------|--------------|
-| **Cart Management** | ![Cart Page](screenshots/cart-page.png) | E-commerce Cart Workflow | - Dynamic pricing<br>- Real-time inventory<br>- Seamless checkout |
-| **User Authentication** | ![Login Page](screenshots/login-page.png) | Secure User Access | - Responsive design<br>- Multi-factor authentication<br>- OAuth integration |
-| **Order Tracking** | ![Order Page](screenshots/order-page.png) | Comprehensive Order Management | - Order history<br>- Status tracking<br>- Detailed order information |
+To optionally build from source (you will need a newish version of Docker to do this) use Docker Compose. Optionally edit the `.env` file to specify an alternative image registry and version tag; see the official [documentation](https://docs.docker.com/compose/env-file/) for more information.
 
-### Advanced Interfaces
+To download the tracing module for Nginx, it needs a valid Instana agent key. Set this in the environment before starting the build:
 
-| Advanced Interface | Screenshot | Functionality |
-|-------------------|------------|---------------|
-| **Robot Management** | ![Robot Page](screenshots/robot-page.png) | - Automated robot monitoring<br>- Performance analytics<br>- Real-time control dashboard |
-| **AI Analytics** | ![AI Page](screenshots/ai-page.png) | - Predictive analytics<br>- Machine learning insights<br>- Recommendation engine |
+```bash
+export INSTANA_AGENT_KEY="<your agent key>"
+docker-compose build
 
-### Technical Visualization
+docker-compose push
 
-<p align="center">
-  <img src="screenshots/devops-monitoring-dashboard.png" alt="DevOps Monitoring Dashboard" width="850">
-  <br>
-  <em>Integrated Monitoring Dashboard with Comprehensive Metrics and Logs</em>
-</p>
+docker-compose pull
+docker-compose up
 
-**Monitoring Highlights:**
-- Full-stack observability
-- Real-time performance metrics
-- Automated alerting and reporting
-```
+docker-compose -f docker-compose.yaml -f docker-compose-load.yaml up
 
-Key Improvements:
-1. More structured and professional layout
-2. Added context and technical descriptions
-3. Included architecture and monitoring overviews
-4. Used tables for better organization
-5. Centered and annotated images
-6. Added technical insights and key features
-7. Used markdown formatting for enhanced readability
+minikube ip
+kubectl get svc web
 
-Recommendations for screenshot creation:
-- Use high-resolution images
-- Include annotations or highlights
-- Show actual dashboards and interfaces
-- Maintain consistent styling
-- Focus on technical details and workflows
+./build.sh [push]
+./load-gen.sh <args>
 
-Would you like me to elaborate on any part of this approach?
+curl http://<host>:8080/api/cart/metrics
+curl http://<host>:8080/api/payment/metrics
+
+aws-hosted-zone.png
+aws-acm.png
+eks-cluster.png
+cart-page.png
+login-page.png
+order-page.png
+robot-page.png
+ai-page.png
+git add screenshots/
+git commit -m "Add portfolio screenshots"
+git push
+
+---
+
+✅ **Key points to make images live:**
+
+1. `README.md` must be at repo root.  
+2. `screenshots/` folder must be at **repo root**, alongside `README.md`.  
+3. Image filenames must match exactly (case-sensitive).  
+4. Commit and push images to GitHub.  
+
+---
+
+If you want, I can **also add a “Live Demo / Portfolio” section at the top** with clickable links so it looks more polished for recruiters viewing your GitHub portfolio.  
+
+Do you want me to do that next?
+
