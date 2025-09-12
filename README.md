@@ -1,108 +1,139 @@
-Three Tier Architecture Deployment on AWS EKS
+1. Architecture Overview
 
-Stan's Robot Shop is a sample microservice application you can use as a sandbox to test and learn containerised application orchestration and monitoring techniques. It is not intended to be a comprehensive reference example of how to write a microservices application, although you will better understand some of those concepts by playing with Stan's Robot Shop. To be clear, the error handling is patchy and there is not any security built into the application.
 
-You can get more detailed information from my blog post about this sample microservice application.
+Figure 1: Three-tier microservices architecture.
 
-This sample microservice application has been built using these technologies:
+2. AWS EKS Cluster
 
-    NodeJS (Express)
-    Java (Spring Boot)
-    Python (Flask)
-    Golang
-    PHP (Apache)
-    MongoDB
-    Redis
-    MySQL (Maxmind data)
-    RabbitMQ
-    Nginx
-    AngularJS (1.x)
 
-The various services in the sample application already include all required Instana components installed and configured. The Instana components provide automatic instrumentation for complete end to end tracing, as well as complete visibility into time series metrics for all the technologies.
+Figure 2: EKS cluster hosting all microservices.
 
-To see the application performance results in the Instana dashboard, you will first need an Instana account. Don't worry a trial account is free.
-Build from Source
+3. Networking & Ingress
 
-To optionally build from source (you will need a newish version of Docker to do this) use Docker Compose. Optionally edit the .env file to specify an alternative image registry and version tag; see the official documentation for more information.
 
-To download the tracing module for Nginx, it needs a valid Instana agent key. Set this in the environment before starting the build.
+Figure 3: AWS Route 53 hosted zone.
 
-$ export INSTANA_AGENT_KEY="<your agent key>"
 
-Now build all the images.
+Figure 4: Kubernetes ingress configuration.
 
-$ docker-compose build
+4. Certificates & Security
 
-If you modified the .env file and changed the image registry, you need to push the images to that registry
 
-$ docker-compose push
+Figure 5: SSL certificates managed by AWS ACM.
 
-Run Locally
+5. Monitoring with Instana
 
-You can run it locally for testing.
 
-If you did not build from source, don't worry all the images are on Docker Hub. Just pull down those images first using:
+Figure 6: Instana dashboard showing end-to-end traces.
 
-$ docker-compose pull
+6. Microservices Overview
+Cart Service
 
-Fire up Stan's Robot Shop with:
 
-$ docker-compose up
+Handles shopping cart operations.
 
-If you want to fire up some load as well:
+Order Service
 
-$ docker-compose -f docker-compose.yaml -f docker-compose-load.yaml up
 
-If you are running it locally on a Linux host you can also run the Instana agent locally, unfortunately the agent is currently not supported on Mac.
+Handles purchase orders.
 
-There is also only limited support on ARM architectures at the moment.
-Marathon / DCOS
+Login / User Service
 
-The manifests for robotshop are in the DCOS/ directory. These manifests were built using a fresh install of DCOS 1.11.0. They should work on a vanilla HA or single instance install.
 
-You may install Instana via the DCOS package manager, instructions are here: https://github.com/dcos/examples/tree/master/instana-agent/1.9
-Kubernetes
+Handles user login and authentication.
 
-You can run Kubernetes locally using minikube or on one of the many cloud providers.
+7. Build & Run Locally
+Build from Source (Optional)
+export INSTANA_AGENT_KEY="<your-agent-key>"
+docker-compose build
+docker-compose push  # optional if using custom registry
 
-The Docker container images are all available on Docker Hub.
+Run from Docker Hub
+docker-compose pull
+docker-compose up
+docker-compose -f docker-compose.yaml -f docker-compose-load.yaml up
 
-Install Stan's Robot Shop to your Kubernetes cluster using the Helm chart.
 
-To deploy the Instana agent to Kubernetes, just use the helm chart.
-Accessing the Store
+Web frontend: http://localhost:8080
 
-If you are running the store locally via docker-compose up then, the store front is available on localhost port 8080 http://localhost:8080
+⚠️ Instana agent only supported on Linux; limited support on ARM and Mac.
 
-If you are running the store on Kubernetes via minikube then, find the IP address of Minikube and the Node Port of the web service.
+8. Kubernetes / Helm Deployment
+Deploy Instana Agent
+helm repo add instana https://agents.instana.io/helm
+helm repo update
+helm install instana-agent instana/agent \
+  --set agentKey=<your-agent-key> \
+  --namespace instana --create-namespace
 
-$ minikube ip
-$ kubectl get svc web
+Deploy Robot Shop
+helm repo add robotshop https://path-to-robotshop-helm-chart
+helm repo update
 
-If you are using a cloud Kubernetes / Openshift / Mesosphere then it will be available on the load balancer of that system.
-Load Generation
+helm install robotshop robotshop/stan-robot-shop \
+  --namespace robotshop --create-namespace \
+  --set instana.eumKey=<your-eum-key> \
+  --set instana.eumReportingUrl=<instana-eum-url>
 
-A separate load generation utility is provided in the load-gen directory. This is not automatically run when the application is started. The load generator is built with Python and Locust. The build.sh script builds the Docker image, optionally taking push as the first argument to also push the image to the registry. The registry and tag settings are loaded from the .env file in the parent directory. The script load-gen.sh runs the image, it takes a number of command line arguments. You could run the container inside an orchestration system (K8s) as well if you want to, an example descriptor is provided in K8s directory. For End-user Monitoring ,load is not automatically generated but by navigating through the Robotshop from the browser .For more details see the README in the load-gen directory.
-Website Monitoring / End-User Monitoring
-Docker Compose
+Access the Store
+kubectl get svc -n robotshop
 
-To enable Website Monioring / End-User Monitoring (EUM) see the official documentation for how to create a configuration. There is no need to inject the JavaScript fragment into the page, this will be handled automatically. Just make a note of the unique key and set the environment variable INSTANA_EUM_KEY and INSTANA_EUM_REPORTING_URL for the web image within docker-compose.yaml.
-Kubernetes
 
-The Helm chart for installing Stan's Robot Shop supports setting the key and endpoint url required for website monitoring, see the README.
-Prometheus
+NodePort: http://<node-ip>:<node-port>
 
-The cart and payment services both have Prometheus metric endpoints. These are accessible on /metrics. The cart service provides:
+LoadBalancer: AWS ELB DNS name
 
-    Counter of the number of items added to the cart
+9. Load Generation
 
-The payment services provides:
+A separate load generator is provided in the load-gen directory (Python + Locust):
 
-    Counter of the number of items perchased
-    Histogram of the total number of items in each cart
-    Histogram of the total value of each cart
+cd load-gen
+./build.sh push
+./load-gen.sh --host=http://<robotshop-web-service-url> --users 100 --spawn-rate 10
 
-To test the metrics use:
 
-$ curl http://<host>:8080/api/cart/metrics
-$ curl http://<host>:8080/api/payment/metrics
+Optional end-user monitoring (EUM) through web navigation.
+
+10. Prometheus Metrics
+
+Cart Service: /metrics
+
+Counter: number of items added
+
+Payment Service: /metrics
+
+Counter: number of items purchased
+
+Histogram: number of items per cart
+
+Histogram: total value of each cart
+
+kubectl port-forward svc/cart 8080:8080 -n robotshop
+curl http://localhost:8080/api/cart/metrics
+
+kubectl port-forward svc/payment 8081:8080 -n robotshop
+curl http://localhost:8081/api/payment/metrics
+
+11. Summary
+
+Multi-language microservices on AWS EKS
+
+Instana monitoring with end-to-end tracing
+
+Kubernetes Ingress, ACM SSL, and Route 53 Hosted Zone
+
+Realistic workflows: Cart, Orders, Login
+
+Optional load generation for performance testing
+
+Images in Repo
+images/
+    acm.png
+    ai.png
+    cart.png
+    cluster.png
+    hostedzone.png
+    ingress.png
+    login.png
+    order.png
+    robot.png
