@@ -136,13 +136,41 @@ Create a folder screenshots/ at repo root.
 
 Add these images exactly:
 
-pgsql
-Copy code
-aws-hosted-zone.png
-aws-acm.png
-eks-cluster.png
-cart-page.png
-login-page.png
-order-page.png
-robot-page.png
-ai-page.png
+## Screenshots
+
+Here’s a visual tour of the AWS infrastructure and application pages.  
+*(All images are located in the `screenshots/` folder at the root of the repo.)*
+
+### AWS Infrastructure Pages
+
+| Hosted Zone | AWS ACM | EKS Cluster |
+|------------|---------|------------|
+| ![Hosted Zone](screenshots/aws-hosted-zone.png) | ![AWS ACM](screenshots/aws-acm.png) | ![EKS Cluster](screenshots/eks-cluster.png) |
+
+**Descriptions:**  
+- **Hosted Zone:** Shows DNS records in Route 53 for your custom domain.  
+- **AWS ACM:** Displays TLS/SSL certificate details for HTTPS termination.  
+- **EKS Cluster:** Overview of the deployed Amazon EKS cluster with nodes, namespaces, and workloads.
+
+---
+
+### Application Pages
+
+| Cart Page | Login Page | Order Page |
+|-----------|-----------|-----------|
+| ![Cart Page](screenshots/cart-page.png) | ![Login Page](screenshots/login-page.png) | ![Order Page](screenshots/order-page.png) |
+
+**Descriptions:**  
+- **Cart Page:** Items in the user cart, pricing, and checkout workflow.  
+- **Login Page:** Mobile/desktop-friendly login form for user authentication.  
+- **Order Page:** Displays order history, status, and detailed information for each order.
+
+---
+
+| Robot Page | AI Page |
+|------------|---------|
+| ![Robot Page](screenshots/robot-page.png) | ![AI Page](screenshots/ai-page.png) |
+
+**Descriptions:**  
+- **Robot Page:** Interface for robot management, automation, or monitoring dashboard.  
+- **AI Page:** Interface showing AI-powered analytics, recommendations, or simulations.
