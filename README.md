@@ -106,3 +106,32 @@ To test the metrics use:
 
 $ curl http://<host>:8080/api/cart/metrics
 $ curl http://<host>:8080/api/payment/metrics
+
+
+# Project Screenshots
+
+This repository contains screenshots demonstrating various pages, AWS resources, and monitoring tools used in the project. Each image highlights a specific component or feature. All images are stored in the `screenshots/` folder.
+
+## Images
+
+| Image | Description | Path |
+|-------|-------------|------|
+| al-page.png | Screenshot of the **AL (Application Load) page** showing load balancer details or configurations. | `screenshots/al-page.png` |
+| aws-acm.png | Screenshot of **AWS ACM (Certificate Manager)** displaying SSL/TLS certificate configurations. | `screenshots/aws-acm.png` |
+| aws-hosted-zone.png | Screenshot of **AWS Hosted Zone** in Route 53 showing DNS records and domain setup. | `screenshots/aws-hosted-zone.png` |
+| cart-page.png | Screenshot of the **Cart page** in the application demonstrating shopping cart functionality. | `screenshots/cart-page.png` |
+| eks-cluster.png | Screenshot of the **EKS Cluster** in AWS showing cluster overview and nodes. | `screenshots/eks-cluster.png` |
+| grafana.png | Screenshot of the **Grafana dashboard** for monitoring metrics and visualizations. | `screenshots/grafana.png` |
+| grafana-cluster.png | Screenshot of Grafana showing metrics specifically for the **cluster performance**. | `screenshots/grafana-cluster.png` |
+| login-page.png | Screenshot of the **Login page** of the application showing authentication flow. | `screenshots/login-page.png` |
+| order-page.png | Screenshot of the **Order page** demonstrating order placement and details. | `screenshots/order-page.png` |
+| prometheus.png | Screenshot of the **Prometheus monitoring dashboard** for collecting metrics. | `screenshots/prometheus.png` |
+| robot-page.png | Screenshot of the **Robot page** showcasing automation or robotic operations in the app. | `screenshots/robot-page.png` |
+
+## Purpose
+
+These images are intended to provide visual references for:
+
+- AWS infrastructure setup
+- Application pages and user interfaces
+- Monitoring and observability tools like Grafana and Prometheus
