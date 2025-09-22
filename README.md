@@ -110,10 +110,6 @@ $ curl http://<host>:8080/api/payment/metrics
 
 # Project Screenshots
 
-This repository contains screenshots demonstrating various pages, AWS resources, and monitoring tools used in the project. Each image highlights a specific component or feature. All images are stored in the `screenshots/` folder.
-
-# Project Screenshots
-
 This repository contains screenshots demonstrating various pages, AWS resources, and monitoring tools used in the project. All images are stored in the `screenshots/` folder.
 
 ## Screenshots
